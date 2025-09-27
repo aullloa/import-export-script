@@ -28,13 +28,13 @@ for b_line in baselight_lines:
     starting_frame = frames[0]
     ending_frame = frames[0]
     for frame in frames[1:]:
-        if frame == starting_frame + 1: # correct sequence
+        if frame == ending_frame + 1: # correct sequence
             ending_frame = frame
         else:
-            if starting_frame == ending_frame:
+            if starting_frame == ending_frame: #single frame with no sequential frame
                 row = [new_url, starting_frame]
             else:
                 row = [new_url, f"{starting_frame}-{ending_frame}"]
             writer.writerow(row)
-            starting_frame = ending_frame = frame
+            starting_frame = ending_frame = frame #reset trackers
 
