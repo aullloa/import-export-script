@@ -1,44 +1,53 @@
 import csv
+try:
+    baselight_file = open("Baselight_export_fall2025.txt", "r")
+    xytech_file = open("Xytech_fall2025.txt", "r")
+    nerd_file = open("Nerd_export_fall2025.csv", "w")
 
-baselight_file = open("Baselight_export_fall2025.txt", "r")
-xytech_file = open("Xytech_fall2025.txt", "r")
-nerd_file = open("Nerd_export_fall2025.csv", "w")
+    writer = csv.writer(nerd_file)
+    writer.writerow(["Location", "Frames to Fix"])
 
-writer = csv.writer(nerd_file)
-writer.writerow(["Location", "Frames to Fix"])
+    baselight_lines = baselight_file.readlines()
+    xytech_lines = xytech_file.readlines()
 
-baselight_lines = baselight_file.readlines()
-xytech_lines = xytech_file.readlines()
-
-for b_line in baselight_lines:
-    eachLine = b_line.strip().split()
-    url = eachLine[0].strip("/baselightfilesystem1")
-    for x_line in xytech_lines:
-        if not (x_line.startswith("/")):
-            continue
-        else:
-            if (x_line.__contains__(url)):
-                new_url = x_line
-                break
-    frames = list(map(int, eachLine[1:])) # Converting to int to check sequence
-
-    starting_frame = frames[0]
-    ending_frame = frames[0]
-    for frame in frames[1:]:
-        if frame == ending_frame + 1: # correct sequence
-            ending_frame = frame
-        else:
-            if starting_frame == ending_frame: #single frame with no sequential frame
-                row = [new_url, starting_frame]
+    for b_line in baselight_lines:
+        eachLine = b_line.strip().split()
+        url = eachLine[0].strip("/baselightfilesystem1")
+        for x_line in xytech_lines:
+            if not (x_line.startswith("/")):
+                continue
             else:
-                row = [new_url, f"{starting_frame}-{ending_frame}"]
-            writer.writerow(row)
-            starting_frame = ending_frame = frame #reset trackers
+                if (x_line.__contains__(url)):
+                    new_url = x_line
+                    break
+        frames = list(map(int, eachLine[1:])) # Converting to int to check sequence
 
-    # This handles logic when the last frame on the list is reached
-    if starting_frame == ending_frame:
-        row = [new_url, starting_frame]
-    else:
-        row = [new_url, f"{starting_frame}-{ending_frame}"]
-    writer.writerow(row)
+        starting_frame = frames[0]
+        ending_frame = frames[0]
+        for frame in frames[1:]:
+            if frame == ending_frame + 1: # correct sequence
+                ending_frame = frame
+            else:
+                if starting_frame == ending_frame: #single frame with no sequential frame
+                    row = [new_url, starting_frame]
+                else:
+                    row = [new_url, f"{starting_frame}-{ending_frame}"]
+                writer.writerow(row)
+                starting_frame = ending_frame = frame #reset trackers
+
+        # This handles logic when the last frame on the list is reached
+        if starting_frame == ending_frame:
+            row = [new_url, starting_frame]
+        else:
+            row = [new_url, f"{starting_frame}-{ending_frame}"]
+        writer.writerow(row)
+except FileNotFoundError:
+    print("Files not found")
+except Exception as e:
+    print("An unexpected error occurred")
+finally:
+    baselight_file.close()
+    xytech_file.close()
+    nerd_file.close()
+    print("Import successful!\nData exported to csv.")
 
