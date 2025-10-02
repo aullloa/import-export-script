@@ -2,11 +2,12 @@ import csv
 try:
     baselight_file = open("Baselight_export_fall2025.txt", "r")
     xytech_file = open("Xytech_fall2025.txt", "r")
-    nerd_file = open("Nerd_export_fall2025.csv", "w")
+    nerd_file = open("Nerd Tracker.csv", "w")
 
     writer = csv.writer(nerd_file)
     writer.writerow(["Location", "Frames to Fix"])
 
+    # Saved lines to avoid issues with backtracking
     baselight_lines = baselight_file.readlines()
     xytech_lines = xytech_file.readlines()
 
